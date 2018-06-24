@@ -1,11 +1,11 @@
 // Import the prerequisites
 
-const { providers, Wallet } = require('ethers');
+const { providers, Wallet, utils } = require('ethers');
 const { default: EthersAdapter } = require('@colony/colony-js-adapter-ethers');
 const { TrufflepigLoader } = require('@colony/colony-js-contract-loader-http');
 
 // Import the ColonyNetworkClient
-const { default: ColonyNetworkClient } = require('@colony/colony-js-client');
+const { default: ColonyNetworkClient, EMPTY_ADDRESS } = require('@colony/colony-js-client');
 
 // Create an instance of the Trufflepig contract loader
 const loader = new TrufflepigLoader();
@@ -56,6 +56,13 @@ const example = async () => {
 
   // Or alternatively, just its address:
   // const colonyClient = await networkClient.getColonyClientByAddress(colonyAddress);
+
+  const twentyETH = utils.parseEther('2.0');
+  await wallet.send(colonyAddress, twentyETH);
+  await colonyClient.claimColonyFunds.send({ token: EMPTY_ADDRESS });
+  const { balance } = await colonyClient.getPotBalance.call({ potId: 1, token: EMPTY_ADDRESS });
+
+  console.log(balance.toString());
 
   // You can also get the Meta Colony:
   const metaColonyClient = await networkClient.getMetaColonyClient();
